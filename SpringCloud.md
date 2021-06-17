@@ -1,4 +1,11 @@
-<h1 align = "center">SpringCloud</h1>
+---
+title: 'SpringCloud'
+date: 2020-12-21 17:15:08
+tags: [Eureka,springcloud]
+categories: "微服务"
+---
+
+
 
 ### 一、springCloud之Eureka
 
@@ -65,7 +72,7 @@ eureka在新版中，在jar包中将eureka的客户端和eureka的服务端进�
         defaultZone: http://localhost:7001/eureka
   ```
 
-  **注意**：在集群模式下，Eureka的服务端要将本台Eureka服务器分别注册到集群中的其他几台Eureka服务器上，地址使用逗号隔开。在客户端，要将本台客户端服务分别注册到集群中的每一台Eureka服务器中；
+  注意：在集群模式下，Eureka的服务端要将本台Eureka服务器分别注册到集群中的其他几台Eureka服务器上，地址使用逗号隔开。在客户端，要将本台客户端服务分别注册到集群中的每一台Eureka服务器中；
 
 - 修改业务启动类：
 
