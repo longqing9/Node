@@ -7,7 +7,7 @@ categories: "java"
 
 ### 1、Map的实现类如下图所示：
 
-![](E:\node\Node\picture\map.png)
+![](E:\Node\picture\map.png)
 
 ### 2、HashMap说明
 
@@ -15,7 +15,7 @@ categories: "java"
 
 HashMap的结构如下：
 
-![](E:\node\Node\picture\Map1.jpg)
+![](E:\Node\picture\Map1.jpg)
 
 HashMap中是采用key-value键值对的形式进行存储数据的，底层数据结构是由数组＋链表构成的。在JDK7中叫Entry，在JDK8中叫Node。
 
@@ -27,9 +27,31 @@ HashMap对象创建时，初始化长度为16（一个长度为16的Node数组�
 
 #### 2.2 HashMap的扩容机制
 
+默认创建HashMap时，HashMap中数组的初始长度是16，负载因子为0.75f。创建HashMap可以初始化数组的长度和负载因子大小。
 
+当HashMap进行put数据时，会判断当前集合中存储的元素个数，当HashMap中元素的个数超过（数组的长度 * 负载因子）时，HashMap开始进行扩容，在扩容时，HashMap会首先创建一个数组长度是为 （当前数组长度 * 2）的新数组，并开始遍历原HashMap，对现有的Node<Key,value>重新进行hash计算获取index值，存入新的Node[]数组中，如果存在相同索引值，尾插法存储在链表中。
 
+#### 2.3 补充说明
 
+##### 1、数组使用2倍扩容的原因
+
+为了性能方面考虑，因为HashMap在计算Node的index值时，是通过位运算(hash & (length-1))实现的，这种实现方式的效率可以比 hash % （length -1）的计算方式高出10倍左右。
+
+##### 2、在数组长度超出64的条件下，链表长度超出8开始树化的原因
+
+根据泊松分布，在负载因为为0.75f时，单个hash槽内的数据长度为8的概率小于百万分之一；
+
+##### 3、HashMap线程不安全的原因
+
+因为HashMap的put方法和resize等操作都不是同步的。假设两个线程同一时间做put操作，就会有可能出现计算的size不正确。
+
+##### 4、HashMap的Key为null
+
+在HashMap中，允许存在一个Key为null的node。
+
+##### 5、通过key获取元素是如何进行的
+
+通过key获取元素时，先通过hash & （length- 1）获取元素在数组中的位置，然后再比较数组中的值，如果是链表则进行循环遍历比较，找到后返回数据。比较时，对于值对象，==比较的是两个对象的值，对于引用对象，比较的是两个对象的地址。
 
 ### 3、TreeMap
 
