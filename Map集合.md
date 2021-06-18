@@ -53,15 +53,53 @@ HashMap对象创建时，初始化长度为16（一个长度为16的Node数组�
 
 通过key获取元素时，先通过hash & （length- 1）获取元素在数组中的位置，然后再比较数组中的值，如果是链表则进行循环遍历比较，找到后返回数据。比较时，对于值对象，==比较的是两个对象的值，对于引用对象，比较的是两个对象的地址。
 
-### 3、TreeMap
+### 3、ConcurrentHashMap
 
+ConcurrentHashMap底层是基于数组+链表组成的，使用volatile关键字修饰它的value和下一个节点，以此保证数据的可见性和有序性，使用CAS和Synchronized保证并发安全性；
 
+#### 3.1 ConcurrentHashMap原理
+
+ConcurrentHashMap的底层是数组和链表，其中并发问题是通过CAS和Synchronized解决的。ConcurrentHashMap的默认初始化大小是16，负载因子是0.75f，Hash冲突、树化的条件和HashMap的方式相同，ConcurrentHash中不允许key或value为null,在put时如果任意一个为null就会抛出空指针异常，ConcurrentHashMap在创建对象时，不会进行初始化，只有当第一次put时，才会进行初始化，初始化数组的默认空间大小为16，扩容时大小为2的幂次方。
+
+#### 3.2 ConcurrentHashMap的get方法的过程
+
+首先计算hash值，定位到该table索引位置，如果是首节点符合就返回
+
+如果遇到扩容的时候，就会在新的数组上查找该节点，匹配就返回
+
+以上都不符合的话，就往下遍历节点，匹配就返回，否则最后就返回null
+
+#### 3.3 扩容过程
+
+1、先创建一个新的数组，长度树原数组的2倍。
+
+2、首先需要把老数组的值拷贝(通过Hash计算位置)到新数组上，数组拷贝是从数组末端开始的，设值时是通过CAS（putObjectVolatile）方法保证数据安全性。
+
+3、在复制时，会先在原数组槽点上加锁，保证原数组槽点不能操作，原数组槽点上的节点设置到新数组之后会将原数组槽点设置为转转移节点，转移节点不可以新增数据。
+
+4、如果有新的数据进行put的位置为转移节点，会等待新数组赋值完成，在进行put。
+
+5、新数组赋值完成，会直接把新数组赋值给数组容器，至此扩容完成。
+
+#### 3.4 补充说明
+
+##### 1、concurrentHashMap是如何保证线程安全的
+
+数组用volatile修饰主要是保证在数组扩容的时候保证可见性，使用CAS和Synchronized保证并发安全性。同时采用锁升级的优化方式，优先使用偏向锁优先同一线程然后再次获取锁，如果失败就升级为CAS轻量级锁，如果失败就自选，防止线程被系统挂起，最后如果以上都失败就升级为重量级锁，以此保证其高效率。
+
+##### 2、ConcurrentHashMap不支持key或value为空的原因
+
+concurrentHashMap可以保证线程安全，如果ConcurrentHashMap中的value为null，就无法判断value为空，还是没有对应的key。
+
+##### 3、ConcurrentHashMap的效率问题
+
+在线程安全的几个map实现类中，concurrentHashMap的效率是最高的，因为在它的内部的锁粒度更低，采用CAS和Synchronized实现线程安全的。HashTable则是直接使用Synchronized在数组上加锁保证线程安全的。
 
 ### 4、HashTable
 
 
 
-### 5、ConcurrentHashMap
+### 3、TreeMap
 
 
 
