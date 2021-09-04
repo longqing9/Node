@@ -4,7 +4,7 @@
 
 相比之下，Spring容器中Bean的生命周期比较复杂。Spring容器中的Bean的创建到销毁要经历以下几步：Bean的实例化--》Bean属性注入--》Bean的初始化--》此时bean可以被正常使用--》Bean的销毁。如下图所示：
 
-![](E:\Node\picture\spring-bean.jpg)
+![](https://longqing9.gitee.io/blog/images/spring-bean.jpg)
 
 - Bean的实例化：Spring对Bean进行实例化；
 - Bean属性注入：Spring将值和Bean的引用注入到Bean的属性；
